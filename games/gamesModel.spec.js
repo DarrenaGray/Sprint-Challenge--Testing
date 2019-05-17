@@ -7,16 +7,18 @@ const server = require('../api/server');
 const Games = require('./gamesModel');
 
 describe('games model', () => {
-	afterEach(async () => {
+	beforeEach(async () => {
 		await db('games').truncate();
 	});
 	describe('POST /, insert()', () => {
 		it('should add a game', async () => {
-			await Games.insert({
-				title: 'Destiny',
-				genre: 'MMO first person shooter',
-				releasedYear: '2014'
-			});
+			await Games.insert([
+				{
+					title: 'Destiny',
+					genre: 'MMO first person shooter',
+					releasedYear: '2014'
+				}
+			]);
 
 			const games = await db('games');
 
@@ -24,27 +26,20 @@ describe('games model', () => {
 		});
 
 		it('should return 200', async () => {
-			await Games.insert({
+			const res = await request(server).post('/games').send({
 				title: 'Destiny',
 				genre: 'genre',
-				releasedYear: '2019'
+				releasedYear: '2000'
 			});
-
-			const res = await request(server).post('/games');
 
 			expect(res.status).toBe(200);
 		});
 
 		it('should return 422 if information is incomplete ', async () => {
-			const gameInfo = {
+			const res = await request(server).post('/games').send({
 				title: 'Destiny',
-				genre: 'genre',
-				releasedYear: '2000'
-			};
-
-			await db('games').insert(gameInfo);
-
-			const res = await request(server).post('/games');
+				genre: 'genre'
+			});
 
 			expect(res.status).toBe(422);
 		});
