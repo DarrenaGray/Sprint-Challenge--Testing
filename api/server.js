@@ -26,7 +26,7 @@ server.post('/games', (req, res) => {
 				res.status(500).json(err);
 			});
 	} else {
-		res.status(422).json({ message: 'All fields are required.' });
+		res.status(422).json({ message: 'All fields are required' });
 	}
 });
 
